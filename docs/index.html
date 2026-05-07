@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KinBox App</title>
+    <title>KinBox Caregiver App V5</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,24 +20,20 @@
                     },
                     colors: {
                         medical: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7', // Primary Brand Color
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
+                            50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8',
+                            500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e',
                         },
-                        success: '#10B981',
-                        warning: '#F59E0B',
-                        danger: '#EF4444',
+                        success: '#10B981', warning: '#F59E0B', danger: '#EF4444',
+                        zalo: '#0068ff', longchau: '#0052cc', pharmacity: '#00b452'
                     },
                     animation: {
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'bounce-slow': 'bounce 2s infinite',
+                        'fade-out': 'fadeOut 0.5s ease-out forwards',
+                        'slide-down': 'slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        fadeOut: { '0%': { opacity: '1', visibility: 'visible' }, '100%': { opacity: '0', visibility: 'hidden' } },
+                        slideDown: { '0%': { opacity: '0', transform: 'translateY(-150%) translateX(-50%)' }, '100%': { opacity: '1', transform: 'translateY(0) translateX(-50%)' } }
                     }
                 }
             }
@@ -45,159 +41,98 @@
     </script>
 
     <style>
-        /* Tối ưu hóa Root Size để tự động thu phóng toàn bộ App */
-        html {
-            font-size: 16px; /* Mặc định chuẩn trên máy tính */
-        }
-
+        :root { font-size: 14px; }
         body {
-            background-color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
+            background-color: #ffffff; 
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .mobile-frame {
-            width: 100%;
-            max-width: 400px; /* Thu gọn 1 chút cho cân đối */
-            height: 850px;
-            max-height: 90vh; /* Đảm bảo không bị tràn khung hình laptop */
-            aspect-ratio: 9 / 19.5; /* Giữ chuẩn tỉ lệ màn hình iPhone */
-            background-color: #f8fafc;
-            border-radius: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 10px solid #0f172a;
-            transform: translateZ(0); 
+            width: 100%; height: 100dvh;
+            background-color: #f8fafc; position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+            transform: translateZ(0); /* Hack để nút fixed không trôi ra ngoài */
         }
+
+        @media (min-width: 600px) {
+            body { background-color: #f1f5f9; padding: 20px; }
+            .mobile-frame {
+                max-width: 400px; height: 850px; max-height: 90vh;
+                border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+                border: 12px solid #0f172a;
+            }
+            .notch { display: block; }
+        }
+
+        @media (max-width: 599px) { .notch { display: none; } }
 
         .notch {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 110px;
-            height: 25px;
-            background-color: #0f172a;
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
-            z-index: 100; /* Notch always on top */
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 28px; background-color: #0f172a;
+            border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; z-index: 100;
         }
 
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .screen {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        .screen.active {
-            display: block;
-        }
+        .screen { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .nav-item.active {
-            color: #0284c7;
-        }
-        .nav-item.active .nav-indicator {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .nav-indicator {
-            opacity: 0;
-            transform: scale(0);
-            transition: all 0.2s;
-        }
+        .nav-item.active { color: #0284c7; }
+        .nav-item.active .nav-indicator { opacity: 1; transform: scale(1); }
+        .nav-indicator { opacity: 0; transform: scale(0); transition: all 0.2s; }
         
-        .circular-chart {
-            display: block;
-            margin: 0 auto;
-            max-width: 80%;
-            max-height: 250px;
-        }
-        .circle-bg {
-            fill: none;
-            stroke: #e2e8f0;
-            stroke-width: 3.8;
-        }
-        .circle {
-            fill: none;
-            stroke-width: 3.8;
-            stroke-linecap: round;
-            animation: progress 1s ease-out forwards;
-        }
-        @keyframes progress {
-            0% { stroke-dasharray: 0 100; }
-        }
-        .percentage {
-            fill: #0284c7;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: bold;
-            font-size: 0.5em;
-            text-anchor: middle;
-        }
+        .circular-chart { display: block; margin: 0 auto; max-width: 80%; max-height: 250px; }
+        .circle-bg { fill: none; stroke: #e2e8f0; stroke-width: 3.8; }
+        .circle { fill: none; stroke-width: 3.8; stroke-linecap: round; animation: progress 1s ease-out forwards; }
+        @keyframes progress { 0% { stroke-dasharray: 0 100; } }
+        .percentage { fill: #0284c7; font-family: 'Montserrat', sans-serif; font-weight: bold; font-size: 0.5em; text-anchor: middle; }
 
-        /* Splash Screen Transition */
         #splash-screen {
-            transition: opacity 0.5s ease-in-out;
+            position: absolute; inset: 0; background: linear-gradient(135deg, #0284c7, #0ea5e9);
+            z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;
         }
 
-        /* Tối ưu hóa Responsive cho Điện thoại thật & Tablet */
-        @media (max-width: 768px) {
-            html {
-                /* Giảm kích thước gốc: Tailwind dùng 'rem' nên việc này sẽ tự động 
-                   thu nhỏ đồng loạt TOÀN BỘ chữ, padding, margin của cả App */
-                font-size: 14px; 
-            }
-            body {
-                padding: 0;
-                background-color: #f8fafc;
-            }
-            .mobile-frame {
-                border: none;
-                border-radius: 0;
-                max-width: 100%;
-                width: 100vw;
-                height: 100dvh; /* Sử dụng dynamic viewport height */
-                max-height: 100dvh;
-                aspect-ratio: auto; /* Bỏ ép tỉ lệ trên điện thoại */
-            }
-            .notch {
-                display: none; /* Ẩn tai thỏ giả trên điện thoại thật */
-            }
-            nav {
-                border-radius: 0 !important; /* Xóa bo góc thanh điều hướng dưới */
-                padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important; /* Tránh viền dưới iPhone */
-            }
+        .zalo-logo-box {
+            width: 36px; height: 36px; background-color: #0068ff; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden;
         }
+        .zalo-text { color: white; font-weight: 800; font-size: 11px; letter-spacing: -0.2px; margin-top: 1px; line-height: 1; }
 
-        /* Dành riêng cho màn hình điện thoại rất nhỏ (VD: iPhone SE, iPhone 8...) */
-        @media (max-width: 380px) {
-            html {
-                font-size: 13px; /* Ép nhỏ thêm để layout không bị vỡ */
-            }
+        /* Push Notification OS level styling */
+        #os-push-notification {
+            position: absolute; top: 35px; left: 50%; transform: translateX(-50%) translateY(-150%);
+            width: 92%; max-width: 360px; z-index: 9999; opacity: 0; transition: all 0.4s ease;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
+        #os-push-notification.show { animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
 <body>
 
     <div class="mobile-frame">
         <div class="notch"></div>
+
+        <!-- EXTERNAL ZALO PUSH NOTIFICATION -->
+        <div id="os-push-notification" class="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-4 border border-slate-100">
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-5 h-5 bg-zalo rounded flex items-center justify-center shadow-sm">
+                    <span class="text-white font-bold text-[7px]">Zalo</span>
+                </div>
+                <span class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Zalo • Vừa xong</span>
+            </div>
+            <p class="font-bold text-sm text-slate-800 leading-tight">KinBox Assistant</p>
+            <p class="text-xs text-slate-600 mt-1 leading-relaxed">⚠️ Bà Nội chưa uống thuốc cữ Sáng. Cảm biến báo hộp thuốc vẫn đóng. Hãy gọi điện nhắc nhở ngay!</p>
+            <div class="grid grid-cols-3 gap-2 mt-3">
+                <button onclick="dismissPush()" class="bg-zalo text-white text-[9px] font-bold py-2 rounded-xl flex flex-col items-center gap-0.5 shadow-sm active:scale-95 transition-transform"><i class="fa-solid fa-phone"></i> Gọi ngay</button>
+                <button onclick="dismissPush()" class="bg-slate-100 text-slate-600 text-[9px] font-bold py-2 rounded-xl flex flex-col items-center gap-0.5 active:scale-95 transition-transform"><i class="fa-solid fa-clock-rotate-left"></i> Nhắc sau 10p</button>
+                <button onclick="dismissPush()" class="bg-slate-100 text-slate-600 text-[9px] font-bold py-2 rounded-xl flex flex-col items-center gap-0.5 active:scale-95 transition-transform"><i class="fa-solid fa-check-double"></i> Đã nhắc</button>
+            </div>
+        </div>
 
         <!-- ============================================== -->
         <!-- SPLASH SCREEN (Màn hình chờ 3 giây) -->
@@ -225,60 +160,103 @@
 
         <div class="flex-1 overflow-y-auto hide-scrollbar pb-24 relative bg-slate-50" id="app-container">
             
-            <!-- ============================================== -->
+            <div id="screen-home" class="screen active pt-12 px-5 pb-6">
+                <div id="zalo-popup" class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 p-4 mb-5 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-[#0068FF]"></div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-5 h-5 bg-[#0068FF] rounded flex items-center justify-center text-white text-[8px] font-bold">Zalo</div>
+                        <span class="text-xs font-bold text-slate-700">Thông báo từ Zalo</span>
+                        <span class="text-[10px] text-slate-400 ml-auto">Bây giờ</span>
+                    </div>
+                    <p class="text-sm font-bold text-slate-800 mb-1">Bà Nội chưa uống thuốc!</p>
+                    <p class="text-xs text-slate-600 mb-4">Cữ Sáng (08:00) đã trễ. Bạn cần gọi điện nhắc Bà ngay.</p>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="document.getElementById('zalo-popup').style.display='none'" class="w-full bg-[#0068FF] text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-blue-200">
+                            <i class="fa-solid fa-phone"></i> Gọi điện nhắc ngay
+                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="document.getElementById('zalo-popup').style.display='none'" class="flex-1 bg-slate-100 text-slate-700 text-xs font-semibold py-2 rounded-xl">Remind lại sau 10p</button>
+                            <button onclick="document.getElementById('zalo-popup').style.display='none'" class="flex-1 bg-slate-100 text-slate-700 text-xs font-semibold py-2 rounded-xl">Đã nhắc nhở</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+            <!-- ========================================== -->
             <!-- SCREEN 1: HOME / DASHBOARD -->
-            <!-- ============================================== -->
-            <div id="screen-home" class="screen active pt-12 px-5">
-                
-                <!-- Header -->
-                <div class="flex justify-between items-center mb-5 mt-2">
+            <!-- ========================================== -->
+            <div class="flex justify-between items-center mb-5">
                     <div>
                         <p class="text-sm text-slate-500">Xin chào người chăm sóc,</p>
                         <h1 class="text-2xl font-bold text-slate-800">Minh Nam</h1>
                     </div>
-                    <div class="w-12 h-12 rounded-full bg-medical-100 flex items-center justify-center text-medical-600 border-2 border-medical-200 overflow-hidden">
+                    <div class="w-12 h-12 rounded-full bg-medical-100 flex items-center justify-center text-medical-600 border-2 border-medical-200 overflow-hidden shadow-sm">
                         <img src="https://ui-avatars.com/api/?name=Minh+Nam&background=e0f2fe&color=0284c7" alt="Avatar">
                     </div>
                 </div>
 
-                <!-- ALERT: Missed Dose -->
-                <div class="bg-red-50 border border-red-200 rounded-2xl p-4 mb-5 shadow-sm animate-pulse-slow">
+                <!-- Cảnh báo Quên thuốc nội bộ -->
+                <div class="bg-red-50 border border-red-200 rounded-2xl p-4 mb-5 shadow-sm">
                     <div class="flex gap-3">
                         <div class="text-red-500 mt-1"><i class="fa-solid fa-triangle-exclamation text-xl"></i></div>
                         <div>
-                            <h3 class="font-bold text-red-700">Bà Nội chưa uống thuốc!</h3>
-                            <p class="text-xs text-red-600 mt-1">Cữ sáng (08:00) đã trễ 1 tiếng 35 phút. Cảm biến KinBox chưa ghi nhận mở nắp.</p>
-                            <button class="mt-3 bg-red-500 text-white text-sm font-semibold py-2 px-4 rounded-xl w-full flex items-center justify-center gap-2 hover:bg-red-600">
+                            <h3 class="font-bold text-red-700 text-sm">Bà Nội chưa uống thuốc!</h3>
+                            <p class="text-xs text-red-600 mt-1 leading-relaxed">Cữ sáng (08:00) đã trễ 1 tiếng 35 phút. Cảm biến KinBox chưa ghi nhận mở nắp.</p>
+                            <button class="mt-3 bg-red-500 text-white text-xs font-semibold py-2.5 px-4 rounded-xl w-full flex items-center justify-center gap-2 hover:bg-red-600 shadow-sm">
                                 <i class="fa-solid fa-phone"></i> Gọi điện nhắc nhở ngay
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- ALERT: Low Pill Warning -->
-                <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-6 shadow-sm">
-                    <div class="flex justify-between items-start mb-2">
-                        <div class="flex items-center gap-2 text-yellow-700 font-bold">
-                            <i class="fa-solid fa-box-open"></i> Ngăn số 2 sắp hết thuốc
-                        </div>
-                        <span class="bg-yellow-200 text-yellow-800 text-[10px] px-2 py-1 rounded-md font-bold uppercase">Chú ý</span>
+                <!-- Tiện ích Mua thuốc & Gợi ý -->
+                <h3 class="text-lg font-bold text-slate-800 mb-3 mt-6">Tiện ích mua thuốc</h3>
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 mb-6">
+                    <div class="flex gap-2 mb-4">
+                        <button class="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-2.5 flex flex-col items-center justify-center text-slate-700 hover:bg-slate-100 active:scale-95 transition-transform">
+                            <i class="fa-solid fa-map-location-dot text-lg mb-1.5 text-medical-500"></i>
+                            <span class="text-[9px] font-bold">Gần đây</span>
+                        </button>
+                        <button class="flex-1 bg-blue-50 border border-blue-100 rounded-xl p-2.5 flex flex-col items-center justify-center text-longchau hover:bg-blue-100 active:scale-95 transition-transform">
+                            <i class="fa-solid fa-plus-square text-lg mb-1.5"></i>
+                            <span class="text-[9px] font-bold">Long Châu</span>
+                        </button>
+                        <button class="flex-1 bg-green-50 border border-green-100 rounded-xl p-2.5 flex flex-col items-center justify-center text-pharmacity hover:bg-green-100 active:scale-95 transition-transform">
+                            <i class="fa-solid fa-leaf text-lg mb-1.5"></i>
+                            <span class="text-[9px] font-bold">Pharmacity</span>
+                        </button>
                     </div>
-                    <p class="text-xs text-yellow-700 mb-3">Thuốc Huyết Áp (Amlodipine) chỉ còn đủ cho 2 ngày tới.</p>
-                    <div class="flex gap-2">
-                        <button class="flex-1 bg-white border border-yellow-300 text-yellow-700 text-xs font-semibold py-2 rounded-lg flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-map-location-dot"></i> Tiệm thuốc gần đây
-                        </button>
-                        <button class="flex-1 bg-yellow-500 text-white text-xs font-semibold py-2 rounded-lg flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-cart-shopping"></i> Đặt mua Online
-                        </button>
+
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Gợi ý mua lại (Sắp hết)</p>
+                        <!-- Gợi ý 1 -->
+                        <div class="flex items-center justify-between bg-yellow-50/50 p-2.5 rounded-xl border border-yellow-100 mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 flex items-center justify-center text-medical-500"><i class="fa-solid fa-pills text-xs"></i></div>
+                                <div>
+                                    <p class="text-xs font-bold text-slate-700 leading-tight">Amlodipine 5mg</p>
+                                    <p class="text-[9px] text-yellow-600 font-semibold mt-0.5">Sắp hết (Còn dùng 2 ngày)</p>
+                                </div>
+                            </div>
+                            <button class="text-[10px] bg-medical-600 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm">Xem chỗ mua</button>
+                        </div>
+                        <!-- Gợi ý 2 -->
+                        <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 flex items-center justify-center text-medical-500"><i class="fa-solid fa-capsules text-xs"></i></div>
+                                <div>
+                                    <p class="text-xs font-bold text-slate-700 leading-tight">Ginkgo Biloba 120mg</p>
+                                    <p class="text-[9px] text-slate-500 font-semibold mt-0.5">Sắp hết (Còn dùng 4 ngày)</p>
+                                </div>
+                            </div>
+                            <button class="text-[10px] bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-bold">Xem chỗ mua</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- COMPLIANCE RATE -->
                 <h3 class="text-lg font-bold text-slate-800 mb-3">Tổng kết tháng này</h3>
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6 flex items-center gap-4">
-                    <div class="w-24 h-24 shrink-0">
-                        <!-- SVG Circular Progress -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 mb-6 flex items-center gap-4">
+                    <div class="w-20 h-20 shrink-0">
                         <svg viewBox="0 0 36 36" class="circular-chart">
                             <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                             <path class="circle" stroke="#10B981" stroke-dasharray="93, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -286,197 +264,185 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="font-bold text-slate-800">Tỉ lệ tuân thủ rất tốt</h4>
-                        <p class="text-xs text-slate-500 mt-1">Đã uống đúng giờ 88/95 liều thuốc trong tháng qua. Hãy tiếp tục duy trì!</p>
-                        <a href="#" class="text-medical-600 text-xs font-semibold mt-2 inline-block">Xem báo cáo chi tiết <i class="fa-solid fa-arrow-right text-[10px]"></i></a>
+                        <h4 class="font-bold text-slate-800 text-sm">Tỉ lệ tuân thủ rất tốt</h4>
+                        <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">Đã uống đúng giờ 88/95 liều thuốc trong tháng qua. Hãy tiếp tục duy trì!</p>
                     </div>
                 </div>
 
-                <!-- KinBox Device Status -->
                 <h3 class="text-lg font-bold text-slate-800 mb-3">Thiết bị KinBox (Bà Nội)</h3>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col items-center justify-center">
-                        <div class="text-success mb-2 text-2xl"><i class="fa-solid fa-battery-three-quarters"></i></div>
-                        <p class="text-sm font-semibold text-slate-700">75% Pin</p>
-                        <p class="text-[10px] text-slate-400">Dự kiến sạc: 12 ngày nữa</p>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex flex-col items-center justify-center">
+                        <div class="text-success mb-1 text-xl"><i class="fa-solid fa-battery-three-quarters"></i></div>
+                        <p class="text-xs font-semibold text-slate-700">75% Pin</p>
+                        <p class="text-[9px] text-slate-400 mt-0.5">Sạc: 12 ngày nữa</p>
                     </div>
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col items-center justify-center">
-                        <div class="text-medical-500 mb-2 text-2xl"><i class="fa-solid fa-wifi"></i></div>
-                        <p class="text-sm font-semibold text-slate-700">Đã kết nối</p>
-                        <p class="text-[10px] text-slate-400">Wifi: Home_Network</p>
+                    <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-100 flex flex-col items-center justify-center">
+                        <div class="text-medical-500 mb-1 text-xl"><i class="fa-solid fa-wifi"></i></div>
+                        <p class="text-xs font-semibold text-slate-700">Đã kết nối</p>
+                        <p class="text-[9px] text-slate-400 mt-0.5">Wifi: Home_Network</p>
                     </div>
                 </div>
             </div>
 
-            <!-- ============================================== -->
-            <!-- SCREEN 2: SCHEDULE (LỊCH TRÌNH & LỊCH SỬ) -->
-            <!-- ============================================== -->
+            <!-- ========================================== -->
+            <!-- SCREEN 2: SCHEDULE (LỊCH TRÌNH) -->
+            <!-- ========================================== -->
             <div id="screen-schedule" class="screen pt-12 px-5">
                 <h1 class="text-2xl font-bold text-slate-800 mb-4 mt-2">Lịch uống thuốc</h1>
                 
-                <!-- Sub-tabs: Hôm nay / Lịch sử -->
                 <div class="bg-slate-200/50 p-1 rounded-xl flex mb-6">
-                    <button onclick="toggleSubTab('today')" id="subtab-today" class="flex-1 py-2 text-sm font-bold bg-white text-medical-600 rounded-lg shadow-sm transition-all">Hôm nay</button>
-                    <button onclick="toggleSubTab('history')" id="subtab-history" class="flex-1 py-2 text-sm font-medium text-slate-500 rounded-lg transition-all">Lịch sử</button>
+                    <button onclick="toggleSubTab('today')" id="subtab-today" class="flex-1 py-2 text-xs font-bold bg-white text-medical-600 rounded-lg shadow-sm transition-all">Hôm nay</button>
+                    <button onclick="toggleSubTab('history')" id="subtab-history" class="flex-1 py-2 text-xs font-medium text-slate-500 rounded-lg transition-all">Lịch sử</button>
                 </div>
 
-                <!-- VIEW: HÔM NAY -->
                 <div id="view-today">
-                    <p class="text-slate-500 font-medium text-sm mb-4">Thứ Năm, 07 Tháng 5, 2026</p>
+                    <p class="text-slate-500 font-semibold text-xs mb-4 uppercase tracking-wider">Thứ Năm, 07 Tháng 5, 2026</p>
 
-                    <div class="relative border-l-2 border-medical-100 ml-4 pl-6 pb-4 space-y-6">
+                    <div class="relative border-l-2 border-medical-100 ml-3 pl-5 pb-4 space-y-6">
                         
-                        <!-- Taken Dose -->
+                        <!-- Buổi Sáng -->
                         <div class="relative">
-                            <div class="absolute -left-[35px] top-1 w-6 h-6 rounded-full bg-success flex items-center justify-center ring-4 ring-slate-50">
-                                <i class="fa-solid fa-check text-white text-[10px]"></i>
+                            <div class="absolute -left-[29px] top-1 w-5 h-5 rounded-full bg-success flex items-center justify-center ring-4 ring-slate-50">
+                                <i class="fa-solid fa-check text-white text-[8px]"></i>
                             </div>
-                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                            <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 opacity-80">
                                 <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-slate-800">Buổi Sáng - 08:00</h4>
-                                    <span class="bg-green-100 text-green-700 text-[10px] px-2 py-1 rounded-md font-bold uppercase">Đã tuân thủ</span>
+                                    <h4 class="font-bold text-slate-800 text-sm line-through text-slate-500">Buổi Sáng - 08:00</h4>
+                                    <span class="bg-green-100 text-green-700 text-[9px] px-2 py-1 rounded font-bold uppercase tracking-wider">Đã uống</span>
                                 </div>
-                                <div class="inline-block bg-orange-100 text-orange-700 text-[10px] font-semibold px-2 py-1 rounded mb-3">
+                                <div class="inline-block bg-orange-50 text-orange-600 border border-orange-100 text-[10px] font-semibold px-2 py-1 rounded mb-3">
                                     <i class="fa-solid fa-utensils mr-1"></i> Sau ăn sáng 30 phút
                                 </div>
-                                
-                                <!-- Danh sách thuốc buổi Sáng -->
-                                <div class="space-y-3">
+                                <div id="med-list-morning" class="space-y-3">
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-pills text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Losartan 50mg (Huyết áp)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 1</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Losartan 50mg (Huyết áp)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Sáng</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-tablets text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Metformin 850mg (Tiểu đường)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 1</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Metformin 850mg (Tiểu đường)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Sáng</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-capsules text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Glucosamine 500mg (Xương khớp)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 1</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Glucosamine 500mg (Khớp)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Sáng</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-pills text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Aspirin 81mg (Tim mạch)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 1</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Aspirin 81mg (Tim mạch)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Sáng</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-capsules text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Omeprazole 20mg (Bảo vệ dạ dày)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 1</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Omeprazole 20mg (Dạ dày)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Sáng</p></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Future Dose -->
+                        <!-- Buổi Trưa -->
                         <div class="relative">
-                            <div class="absolute -left-[35px] top-1 w-6 h-6 rounded-full bg-medical-500 flex items-center justify-center ring-4 ring-slate-50">
-                                <i class="fa-regular fa-clock text-white text-[10px]"></i>
+                            <div class="absolute -left-[29px] top-1 w-5 h-5 rounded-full bg-medical-500 flex items-center justify-center ring-4 ring-slate-50 shadow-sm">
+                                <i class="fa-regular fa-clock text-white text-[8px]"></i>
                             </div>
-                            <div class="bg-white p-4 rounded-2xl shadow-md border-l-4 border-medical-500">
+                            <div class="bg-white p-3.5 rounded-2xl shadow-md border-l-4 border-medical-500">
                                 <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-slate-800">Buổi Trưa - 12:00</h4>
-                                    <span class="bg-blue-50 text-medical-600 text-[10px] px-2 py-1 rounded-md font-bold uppercase">Sắp tới</span>
+                                    <h4 class="font-bold text-slate-800 text-sm">Buổi Trưa - 12:00</h4>
+                                    <span class="bg-blue-50 text-medical-600 text-[9px] px-2 py-1 rounded font-bold uppercase tracking-wider">Sắp tới</span>
                                 </div>
-                                <div class="inline-block bg-green-100 text-green-700 text-[10px] font-semibold px-2 py-1 rounded mb-3">
+                                <div class="inline-block bg-green-50 text-green-600 border border-green-100 text-[10px] font-semibold px-2 py-1 rounded mb-3">
                                     <i class="fa-solid fa-clock mr-1"></i> Trước ăn trưa 30 phút
                                 </div>
-                                
-                                <!-- Danh sách thuốc buổi Trưa -->
-                                <div class="space-y-3">
+                                <div id="med-list-noon" class="space-y-3">
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-pills text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Amlodipine 5mg (Huyết áp)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 2</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Amlodipine 5mg (Huyết áp)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Trưa</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-tablets text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Glimepiride 2mg (Tiểu đường)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 2</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Glimepiride 2mg (Tiểu đường)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Trưa</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-capsules text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Ginkgo Biloba 120mg (Bổ não)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 2</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Ginkgo Biloba 120mg (Bổ não)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Trưa</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-pills text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Meloxicam 7.5mg (Viêm khớp)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 2</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Meloxicam 7.5mg (Viêm khớp)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Trưa</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-tablets text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Calcium D3 (Chống loãng xương)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 2</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Calcium D3 (Xương khớp)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Trưa</p></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Future Dose -->
+
+                        <!-- Buổi Tối -->
                         <div class="relative">
-                            <div class="absolute -left-[35px] top-1 w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center ring-4 ring-slate-50">
-                                <div class="w-2 h-2 rounded-full bg-slate-400"></div>
+                            <div class="absolute -left-[29px] top-1 w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center ring-4 ring-slate-50">
+                                <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                             </div>
-                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-slate-800">Buổi Tối - 20:00</h4>
-                                </div>
-                                <div class="inline-block bg-indigo-100 text-indigo-700 text-[10px] font-semibold px-2 py-1 rounded mb-3 opacity-60">
+                            <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 opacity-80">
+                                <h4 class="font-bold text-slate-800 text-sm mb-2">Buổi Tối - 20:00</h4>
+                                <div class="inline-block bg-indigo-50 text-indigo-600 border border-indigo-100 text-[10px] font-semibold px-2 py-1 rounded mb-3">
                                     <i class="fa-solid fa-moon mr-1"></i> Trước khi đi ngủ 1 tiếng
                                 </div>
-                                
-                                <!-- Danh sách thuốc buổi Tối -->
-                                <div class="space-y-3 opacity-60">
+                                <div id="med-list-evening" class="space-y-3">
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-pills text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Atorvastatin 20mg (Mỡ máu)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 3</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Atorvastatin 20mg (Mỡ máu)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Tối</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-tablets text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Metformin 850mg (Tiểu đường)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 3</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Metformin 850mg (Tiểu đường)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Tối</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-capsules text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Glucosamine 500mg (Xương khớp)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 3</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Glucosamine 500mg (Khớp)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Tối</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-pills text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Piracetam 800mg (Bổ não)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 3</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Piracetam 800mg (Bổ não)</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Tối</p></div>
                                     </div>
                                     <div class="flex items-start gap-2">
                                         <div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-capsules text-slate-400 text-[10px]"></i></div>
-                                        <div><p class="text-sm font-semibold text-slate-700 leading-tight">Vitamin Tổng Hợp (Dinh dưỡng)</p><p class="text-[10px] text-slate-500">1 viên - Ngăn 3</p></div>
+                                        <div><p class="text-[13px] font-semibold text-slate-700 leading-tight">Vitamin Tổng Hợp</p><p class="text-[10px] text-slate-500 mt-0.5">1 viên - Khay Tối</p></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
-                <!-- VIEW: LỊCH SỬ -->
                 <div id="view-history" class="hidden">
                     <div class="flex justify-between items-center mb-4">
-                        <p class="text-slate-800 font-bold text-sm">Giai đoạn: 07/04/2026 - 08/05/2026</p>
+                        <p class="text-slate-800 font-bold text-xs">Giai đoạn: 07/04/2026 - 08/05/2026</p>
                         <button class="text-medical-600"><i class="fa-solid fa-filter"></i></button>
                     </div>
-
+                    
                     <div class="space-y-4">
                         <!-- Date Block 1 -->
                         <div>
-                            <h5 class="text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Hôm qua, 06/05/2026</h5>
+                            <h5 class="text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 tracking-wider">Hôm qua, 06/05/2026</h5>
                             <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                                <div class="p-3 border-b border-slate-50 flex justify-between items-center bg-green-50/50">
+                                <div class="p-3 border-b border-slate-50 flex justify-between items-center bg-green-50/40">
                                     <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-check-circle text-success"></i>
-                                        <span class="text-sm font-semibold text-slate-700">Sáng - 08:00</span>
+                                        <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                                        <span class="text-xs font-semibold text-slate-700">Sáng - 08:00</span>
                                     </div>
-                                    <span class="text-[10px] text-slate-500">Uống đúng giờ (08:05)</span>
+                                    <span class="text-[10px] text-slate-500">Đúng giờ (08:05)</span>
                                 </div>
-                                <div class="p-3 border-b border-slate-50 flex justify-between items-center bg-green-50/50">
+                                <div class="p-3 border-b border-slate-50 flex justify-between items-center bg-green-50/40">
                                     <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-check-circle text-success"></i>
-                                        <span class="text-sm font-semibold text-slate-700">Trưa - 12:00</span>
+                                        <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                                        <span class="text-xs font-semibold text-slate-700">Trưa - 12:00</span>
                                     </div>
-                                    <span class="text-[10px] text-slate-500">Uống đúng giờ (12:10)</span>
+                                    <span class="text-[10px] text-slate-500">Đúng giờ (12:10)</span>
                                 </div>
-                                <div class="p-3 flex justify-between items-center bg-orange-50/50">
+                                <div class="p-3 flex justify-between items-center bg-orange-50/40">
                                     <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-clock-rotate-left text-warning"></i>
-                                        <span class="text-sm font-semibold text-slate-700">Tối - 20:00</span>
+                                        <i class="fa-solid fa-clock-rotate-left text-warning text-sm"></i>
+                                        <span class="text-xs font-semibold text-slate-700">Tối - 20:00</span>
                                     </div>
                                     <span class="text-[10px] text-slate-500">Uống trễ (21:30)</span>
                                 </div>
@@ -485,128 +451,180 @@
 
                         <!-- Date Block 2 -->
                         <div>
-                            <h5 class="text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Thứ Ba, 05/05/2026</h5>
+                            <h5 class="text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 tracking-wider">Thứ Ba, 05/05/2026</h5>
                             <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                                <div class="p-3 border-b border-slate-50 flex justify-between items-center bg-green-50/50">
+                                <div class="p-3 border-b border-slate-50 flex justify-between items-center bg-green-50/40">
                                     <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-check-circle text-success"></i>
-                                        <span class="text-sm font-semibold text-slate-700">Sáng - 08:00</span>
+                                        <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                                        <span class="text-xs font-semibold text-slate-700">Sáng - 08:00</span>
                                     </div>
                                 </div>
-                                <div class="p-3 border-b border-slate-50 flex justify-between items-center bg-red-50/50">
+                                <div class="p-3 border-b border-slate-50 flex justify-between items-center bg-red-50/40">
                                     <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-xmark-circle text-danger"></i>
-                                        <span class="text-sm font-semibold text-slate-700">Trưa - 12:00</span>
+                                        <i class="fa-solid fa-xmark-circle text-danger text-sm"></i>
+                                        <span class="text-xs font-semibold text-slate-700">Trưa - 12:00</span>
                                     </div>
                                     <span class="text-[10px] text-red-500 font-semibold">Bỏ lỡ</span>
                                 </div>
-                                <div class="p-3 flex justify-between items-center bg-green-50/50">
+                                <div class="p-3 flex justify-between items-center bg-green-50/40">
                                     <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-check-circle text-success"></i>
-                                        <span class="text-sm font-semibold text-slate-700">Tối - 20:00</span>
+                                        <i class="fa-solid fa-check-circle text-success text-sm"></i>
+                                        <span class="text-xs font-semibold text-slate-700">Tối - 20:00</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <button class="w-full py-3 text-sm font-semibold text-medical-600 bg-medical-50 rounded-xl mt-2">
+                        <button class="w-full py-2.5 text-[11px] font-bold text-medical-600 bg-medical-50 rounded-xl mt-2 hover:bg-medical-100 transition-colors">
                             Tải báo cáo PDF tháng này
                         </button>
                     </div>
                 </div>
-
-                <!-- Floating Action Button: Đẩy lên bottom-28 -->
-                <button onclick="openAddModal()" class="fixed bottom-28 right-5 w-14 h-14 bg-medical-600 text-white rounded-full shadow-lg shadow-medical-300 flex items-center justify-center text-xl hover:bg-medical-700 transition-colors z-30">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
+            </div>
+            
+            <div id="add-modal" class="fixed inset-0 bg-slate-900/60 z-50 flex flex-col justify-end hidden opacity-0 transition-opacity duration-300 absolute">
+                <div class="bg-white rounded-t-[30px] w-full p-5 max-h-[90%] overflow-y-auto transform translate-y-full transition-transform duration-300" id="add-modal-content">
+                    <div class="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 py-2">
+                        <h2 class="text-xl font-bold text-slate-800">Lịch Thuốc Mới</h2>
+                        <button onclick="closeAddModal()" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500"><i class="fa-solid fa-times"></i></button>
+                    </div>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Tên thuốc & Liều lượng</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="med-name" placeholder="Tên thuốc" class="flex-[2] border border-slate-200 rounded-xl px-3 py-2 text-sm bg-slate-50">
+                                <input type="text" id="med-dose" placeholder="1 viên" class="flex-1 border border-slate-200 rounded-xl px-3 py-2 text-sm bg-slate-50">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Giai đoạn uống (Từ ngày - Đến ngày)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="date" class="flex-1 border border-slate-200 rounded-xl px-3 py-2 text-xs bg-slate-50">
+                                <i class="fa-solid fa-arrow-right text-slate-300"></i>
+                                <input type="date" class="flex-1 border border-slate-200 rounded-xl px-3 py-2 text-xs bg-slate-50">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase mb-2">Tần suất (Các thứ trong tuần)</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="flex-1 min-w-[35px]"><input type="checkbox" class="hidden peer" checked><div class="text-center py-2 border border-slate-200 rounded-lg text-[10px] font-bold peer-checked:bg-medical-600 peer-checked:text-white">T2</div></label>
+                                <label class="flex-1 min-w-[35px]"><input type="checkbox" class="hidden peer" checked><div class="text-center py-2 border border-slate-200 rounded-lg text-[10px] font-bold peer-checked:bg-medical-600 peer-checked:text-white">T3</div></label>
+                                <label class="flex-1 min-w-[35px]"><input type="checkbox" class="hidden peer" checked><div class="text-center py-2 border border-slate-200 rounded-lg text-[10px] font-bold peer-checked:bg-medical-600 peer-checked:text-white">T4</div></label>
+                                <label class="flex-1 min-w-[35px]"><input type="checkbox" class="hidden peer" checked><div class="text-center py-2 border border-slate-200 rounded-lg text-[10px] font-bold peer-checked:bg-medical-600 peer-checked:text-white">T5</div></label>
+                                <label class="flex-1 min-w-[35px]"><input type="checkbox" class="hidden peer" checked><div class="text-center py-2 border border-slate-200 rounded-lg text-[10px] font-bold peer-checked:bg-medical-600 peer-checked:text-white">T6</div></label>
+                                <label class="flex-1 min-w-[35px]"><input type="checkbox" class="hidden peer" checked><div class="text-center py-2 border border-slate-200 rounded-lg text-[10px] font-bold peer-checked:bg-medical-600 peer-checked:text-white">T7</div></label>
+                                <label class="flex-1 min-w-[35px]"><input type="checkbox" class="hidden peer"><div class="text-center py-2 border border-slate-200 rounded-lg text-[10px] font-bold peer-checked:bg-red-600 peer-checked:text-white">CN</div></label>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Giờ uống</label>
+                                <input type="time" id="med-time" value="08:00" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm bg-slate-50">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Cách uống</label>
+                                <select id="med-compartment" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm bg-slate-50">
+                                    <option>Sau ăn 30p</option>
+                                    <option>Trước ăn 30p</option>
+                                    <option>Uống lúc đói</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="saveMedication()" class="w-full bg-medical-600 text-white font-bold text-sm py-4 rounded-xl shadow-lg">Lưu Lịch Thuốc</button>
+                </div>
             </div>
 
-            <!-- ============================================== -->
-            <!-- SCREEN 3: HỒ SƠ & PHÁC ĐỒ -->
-            <!-- ============================================== -->
+            <!-- ========================================== -->
+            <!-- SCREEN 3: PROFILE (HỒ SƠ) -->
+            <!-- ========================================== -->
             <div id="screen-profile" class="screen pt-12 px-5">
-                <h1 class="text-2xl font-bold text-slate-800 mb-6 mt-2">Hồ sơ Y tế</h1>
+                <h1 class="text-2xl font-bold text-slate-800 mb-5 mt-2">Hồ sơ Y tế</h1>
                 
-                <!-- Patient Info -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-6 flex items-center gap-4 relative overflow-hidden">
-                    <div class="absolute right-0 top-0 w-16 h-16 bg-medical-50 rounded-bl-full -z-0"></div>
-                    <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-2xl border-2 border-rose-200 z-10">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 mb-5 flex items-center gap-4 relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-16 h-16 bg-medical-50 rounded-bl-full z-0"></div>
+                    <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-xl border-2 border-rose-200 z-10 shrink-0">
                         <i class="fa-solid fa-person-cane"></i>
                     </div>
                     <div class="z-10">
-                        <h2 class="font-bold text-lg text-slate-800">Bà Nội (Nguyễn Thị A)</h2>
-                        <p class="text-sm text-slate-500">78 tuổi • Nhóm máu O</p>
+                        <h2 class="font-bold text-base text-slate-800">Bà Nội (Nguyễn Thị A)</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">78 tuổi • Nhóm máu O</p>
                     </div>
                 </div>
 
                 <div class="space-y-5">
-                    <!-- Phác đồ điều trị (Treatment Plan Record) -->
+                    <!-- Phác đồ điều trị -->
                     <div>
-                        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider ml-1 mb-2">Phác đồ điều trị</h3>
+                        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1 mb-2">Phác đồ điều trị</h3>
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
                             <div class="mb-3">
-                                <span class="text-xs text-slate-400 block mb-1">Chẩn đoán bệnh lý</span>
-                                <div class="flex flex-wrap gap-2">
+                                <span class="text-[10px] text-slate-400 block mb-1.5 uppercase font-semibold">Chẩn đoán bệnh lý</span>
+                                <div class="flex flex-wrap gap-1.5">
                                     <span class="bg-red-50 text-red-600 text-[10px] px-2 py-1 rounded border border-red-100 font-semibold">Cao huyết áp</span>
-                                    <span class="bg-orange-50 text-orange-600 text-[10px] px-2 py-1 rounded border border-orange-100 font-semibold">Thoái hóa khớp gối</span>
+                                    <span class="bg-orange-50 text-orange-600 text-[10px] px-2 py-1 rounded border border-orange-100 font-semibold">Thoái hóa khớp</span>
                                     <span class="bg-blue-50 text-blue-600 text-[10px] px-2 py-1 rounded border border-blue-100 font-semibold">Thiếu máu não</span>
                                 </div>
                             </div>
                             <hr class="border-slate-100 my-3">
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <span class="text-[10px] text-slate-400 block">Bác sĩ theo dõi</span>
-                                    <p class="text-sm font-semibold text-slate-700">BS. Trần Văn Bình</p>
+                                    <span class="text-[9px] text-slate-400 block uppercase font-semibold mb-0.5">Bác sĩ theo dõi</span>
+                                    <p class="text-xs font-semibold text-slate-700">BS. Trần Văn Bình</p>
                                 </div>
                                 <div>
-                                    <span class="text-[10px] text-slate-400 block">Cơ sở khám</span>
-                                    <p class="text-sm font-semibold text-slate-700">BV Lão Khoa TW</p>
+                                    <span class="text-[9px] text-slate-400 block uppercase font-semibold mb-0.5">Cơ sở khám</span>
+                                    <p class="text-xs font-semibold text-slate-700">BV Lão Khoa TW</p>
                                 </div>
-                                <div class="col-span-2 bg-medical-50 p-3 rounded-lg flex justify-between items-center">
+                                <div class="col-span-2 bg-medical-50 p-3 rounded-xl flex justify-between items-center mt-1 border border-medical-100">
                                     <div>
-                                        <span class="text-[10px] text-medical-600 font-bold uppercase block">Lịch tái khám</span>
+                                        <span class="text-[9px] text-medical-600 font-bold uppercase block tracking-wider">Lịch tái khám</span>
                                         <p class="text-sm font-bold text-slate-800">15/05/2026</p>
                                     </div>
-                                    <i class="fa-regular fa-calendar-check text-medical-600 text-xl"></i>
+                                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm">
+                                        <i class="fa-regular fa-calendar-check text-medical-600 text-sm"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Care Circle -->
+                    <!-- Vòng tròn chăm sóc -->
                     <div>
-                        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider ml-1 mb-2">Vòng Tròn Chăm Sóc</h3>
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                            <div class="p-3 border-b border-slate-100 flex items-center justify-between">
+                        <div class="flex justify-between items-center mb-2 px-1">
+                            <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Vòng Tròn Chăm Sóc</h3>
+                            <!-- Nút Thêm Người Chăm Sóc -->
+                            <button onclick="openAddCaregiverModal()" class="text-medical-600 font-bold text-[11px] flex items-center gap-1 active:scale-95 transition-transform"><i class="fa-solid fa-user-plus"></i> Thêm người</button>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden" id="caregiver-list">
+                            <div class="p-3 border-b border-slate-50 flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-medical-100 text-medical-600 flex items-center justify-center"><i class="fa-solid fa-user-shield"></i></div>
+                                    <div class="w-9 h-9 rounded-full bg-medical-100 text-medical-600 flex items-center justify-center text-sm"><i class="fa-solid fa-user-shield"></i></div>
                                     <div>
-                                        <p class="font-semibold text-slate-800 text-sm">Minh Nam (Bạn)</p>
-                                        <p class="text-[10px] text-slate-500">Quản trị viên</p>
+                                        <p class="font-semibold text-slate-800 text-xs">Minh Nam</p>
+                                        <p class="text-[9px] text-slate-500 mt-0.5">Quản trị viên (Cháu)</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-3 flex items-center justify-between">
+                            <div class="p-3 border-b border-slate-50 flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center"><i class="fa-regular fa-user"></i></div>
+                                    <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-sm"><i class="fa-regular fa-user"></i></div>
                                     <div>
-                                        <p class="font-semibold text-slate-800 text-sm">Cô Lan (Con gái)</p>
-                                        <p class="text-[10px] text-slate-500">Nhận thông báo khẩn</p>
+                                        <p class="font-semibold text-slate-800 text-xs">Cô Lan</p>
+                                        <p class="text-[9px] text-slate-500 mt-0.5">Người theo dõi (Con gái)</p>
                                     </div>
                                 </div>
-                                <button class="text-slate-400"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                <div class="text-red-500 text-[10px] font-bold bg-red-50 px-2 py-1 rounded"><i class="fa-solid fa-bell"></i> Khẩn cấp</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ============================================== -->
-            <!-- SCREEN 4: TÍCH HỢP ZALO OA -->
-            <!-- ============================================== -->
-            <div id="screen-zalo" class="screen pt-12 px-5">
-                <h1 class="text-2xl font-bold text-slate-800 mb-6 mt-2">Kết nối Zalo</h1>
-                
+            <!-- ========================================== -->
+            <!-- SCREEN 4: ZALO -->
+            <!-- ========================================== -->
+            <div id="screen-zalo" class="screen pt-12 px-4">
                 <!-- Status Liên kết -->
                 <div class="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl p-5 text-white shadow-lg shadow-blue-200 mb-6 flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -653,191 +671,226 @@
                             <p class="text-sm font-bold text-slate-800">Nhắc nhở sạc pin</p>
                             <p class="text-[10px] text-slate-500">Khi KinBox dưới 15% pin</p>
                         </div>
-                        <!-- Toggle OFF -->
+                        <!-- Toggle ON -->
                         <div class="w-10 h-5 bg-slate-200 rounded-full relative cursor-pointer">
                             <div class="absolute left-1 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm"></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Mockup Luồng Zalo (Ví dụ trực quan) -->
-                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider ml-1 mb-2">Thông báo Zalo</h3>
-                <div class="bg-slate-100 rounded-2xl p-4 border border-slate-200 space-y-3">
+                <div class="flex items-center gap-3 mb-5 mt-2 px-1">
+                    <div class="zalo-logo-box shrink-0"><span class="zalo-text">Zalo</span></div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-800 leading-tight">Thông báo Zalo</h1>
+                        <p class="text-[11px] text-slate-500">Kênh OA: KinBox Assistant</p>
+                    </div>
+                </div>
+                <div class="bg-slate-100 p-3 rounded-3xl min-h-[400px] border border-slate-200">
+                    <p class="text-center text-[9px] font-semibold text-slate-400 mb-4 mt-2">Hôm nay 09:35</p>
+                    
                     
                     <!-- Bubble 1: Cảnh báo quên thuốc & Giao việc gọi điện -->
-                    <div class="flex gap-2">
-                        <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-md">OA</div>
-                        <div class="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm text-sm border border-slate-100 relative">
-                            <p class="font-bold text-red-600 text-xs mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Cảnh báo trễ thuốc</p>
+                    <div class="flex gap-2 mb-4">
+                        <div class="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-[10px] shadow-sm">OA</div>
+                        <div class="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-200 relative w-[85%]">
+                            <p class="font-bold text-red-600 text-[11px] mb-1.5"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Cảnh báo trễ thuốc</p>
                             <p class="text-slate-700 text-[11px] leading-relaxed">Bà Nội chưa uống <b>Cữ Sáng (08:00)</b>. Cảm biến báo chưa mở nắp.</p>
-                            <p class="text-slate-700 text-[11px] leading-relaxed mt-1">Anh <span class="text-blue-600 font-semibold">@Minh Nam</span> gọi nhắc Bà nhé!</p>
-                            <div class="mt-2 flex gap-1">
+                            <p class="text-slate-700 text-[11px] leading-relaxed mt-1.5">Anh <span class="text-blue-600 font-semibold bg-blue-50 px-1 rounded">@Minh Nam</span> gọi nhắc Bà nhé!</p>
+                            <div class="mt-2.5 flex gap-1">
                                 <button class="bg-blue-50 text-blue-600 text-[10px] px-3 py-1.5 rounded-lg font-bold border border-blue-100">Đã gọi xong</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Bubble 2: Nhắc mua thuốc & Giao việc đi mua -->
+                    <!-- Bubble 2: Nhắc chia thuốc tuần mới -->
                     <div class="flex gap-2">
-                        <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-md">OA</div>
-                        <div class="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm text-sm border border-slate-100">
-                            <p class="font-bold text-orange-500 text-xs mb-1"><i class="fa-solid fa-cart-shopping mr-1"></i>Nhắc mua thuốc</p>
-                            <p class="text-slate-700 text-[11px] leading-relaxed">Thuốc Huyết Áp (Ngăn 2) chỉ còn đủ dùng 2 ngày.</p>
-                            <p class="text-slate-700 text-[11px] leading-relaxed mt-1">Đã giao việc cho <span class="text-blue-600 font-semibold">@Cô Lan</span> đi mua thêm.</p>
-                            <div class="mt-2">
-                                <button class="w-full bg-blue-500 text-white text-[10px] py-2 rounded-lg font-bold flex items-center justify-center gap-1 shadow-sm">
-                                    <i class="fa-solid fa-location-dot"></i> Bản đồ nhà thuốc gần nhất
-                                </button>
+                        <div class="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-[10px] shadow-sm">OA</div>
+                        <div class="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-200 w-[85%]">
+                            <p class="font-bold text-orange-500 text-[11px] mb-1.5"><i class="fa-solid fa-calendar-days mr-1"></i>Nhắc nhở chia thuốc định kỳ</p>
+                            <p class="text-slate-700 text-[11px] leading-relaxed">Hộp KinBox của Nội sắp hết lượng thuốc đã chia sẵn (còn đủ dùng 2 ngày).</p>
+                            <div class="mt-2.5 flex gap-1">
+                                <button class="bg-blue-50 text-blue-600 text-[10px] px-3 py-1.5 rounded-lg font-bold border border-blue-100 w-full flex items-center justify-center gap-1"><i class="fa-solid fa-check"></i> Xác nhận đã mua</button>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            <!-- ============================================== -->
-            <!-- MODAL THÊM LỊCH THUỐC -->
-            <!-- ============================================== -->
-            <div id="add-modal" class="fixed inset-0 bg-slate-900/60 z-50 flex flex-col justify-end hidden opacity-0 transition-opacity duration-300 absolute">
-                <div class="bg-white rounded-t-[30px] w-full p-5 max-h-[90%] overflow-y-auto transform translate-y-full transition-transform duration-300" id="add-modal-content">
-                    <div class="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 py-2">
-                        <h2 class="text-xl font-bold text-slate-800">Thêm Lịch Thuốc Mới</h2>
-                        <button onclick="closeAddModal()" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200"><i class="fa-solid fa-times"></i></button>
-                    </div>
-                    
-                    <div class="space-y-4 mb-6">
-                        <!-- Tên thuốc & Liều lượng -->
-                        <div class="grid grid-cols-3 gap-3">
-                            <div class="col-span-2">
-                                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Tên thuốc</label>
-                                <input type="text" placeholder="VD: Amlodipine" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-medical-500 focus:ring-1 focus:ring-medical-500 bg-slate-50">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Liều lượng</label>
-                                <input type="text" placeholder="1 viên" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-medical-500 focus:ring-1 focus:ring-medical-500 bg-slate-50">
-                            </div>
-                        </div>
+        </div> 
+        <!-- End of #app-container -->
 
-                        <!-- Thời gian uống (Từ ngày - Đến ngày) -->
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Giai đoạn uống thuốc (Theo đơn bác sĩ)</label>
-                            <div class="flex items-center gap-2">
-                                <input type="date" value="2026-05-08" class="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 bg-slate-50">
-                                <i class="fa-solid fa-arrow-right text-slate-400 text-xs"></i>
-                                <input type="date" value="2026-06-08" class="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 bg-slate-50">
-                            </div>
-                        </div>
-
-                        <!-- Giờ uống & Cách uống -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Giờ nhắc nhở</label>
-                                <input type="time" value="08:00" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-slate-50">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Xếp vào ngăn</label>
-                                <select class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm bg-slate-50">
-                                    <option>Ngăn số 1 (Trống)</option>
-                                    <option>Ngăn số 2</option>
-                                    <option>Ngăn số 3 (Trống)</option>
-                                    <option>Ngăn số 4 (Trống)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Chọn Trước ăn / Sau ăn -->
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-500 uppercase mb-2">Cách uống (Liên quan bữa ăn)</label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <label class="relative">
-                                    <input type="radio" name="meal_time" class="peer sr-only" checked>
-                                    <div class="p-2 border border-slate-200 rounded-xl text-center cursor-pointer peer-checked:bg-green-50 peer-checked:border-green-500 peer-checked:text-green-700 transition-all">
-                                        <i class="fa-solid fa-clock text-sm mb-1 block"></i>
-                                        <span class="text-xs font-semibold">Trước ăn 30p</span>
-                                    </div>
-                                </label>
-                                <label class="relative">
-                                    <input type="radio" name="meal_time" class="peer sr-only">
-                                    <div class="p-2 border border-slate-200 rounded-xl text-center cursor-pointer peer-checked:bg-orange-50 peer-checked:border-orange-500 peer-checked:text-orange-700 transition-all">
-                                        <i class="fa-solid fa-utensils text-sm mb-1 block"></i>
-                                        <span class="text-xs font-semibold">Sau ăn no</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Ghi chú -->
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Ghi chú thêm</label>
-                            <textarea rows="2" placeholder="VD: Uống với nhiều nước..." class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-medical-500 bg-slate-50"></textarea>
-                        </div>
-                    </div>
-                    
-                    <button onclick="saveMedication()" class="w-full bg-medical-600 text-white font-bold text-sm py-3.5 rounded-xl hover:bg-medical-700 transition-colors shadow-lg shadow-medical-200">
-                        Lưu Lịch Thuốc & Đồng Bộ
-                    </button>
-                </div>
-            </div>
-
-        </div> <!-- End App Container -->
+        <!-- Nút Thêm Lịch Thuốc (FAB) - Bắt đầu ẩn, chỉ hiện ở tab Lịch trình -->
+        <button id="add-med-fab" onclick="openAddModal()" class="hidden absolute bottom-24 right-5 w-14 h-14 bg-medical-600 text-white rounded-full shadow-lg shadow-medical-300 items-center justify-center text-xl hover:bg-medical-700 transition-transform active:scale-95 z-30">
+            <i class="fa-solid fa-plus"></i>
+        </button>
 
         <!-- Bottom Navigation -->
-        <nav class="absolute bottom-0 w-full bg-white border-t border-slate-200 px-4 py-3 pb-8 flex justify-between items-center z-40 rounded-b-[33px]">
-            <button onclick="switchTab('home')" id="tab-home" class="nav-item active flex flex-col items-center gap-1 w-14 transition-colors">
-                <i class="fa-solid fa-house text-xl mb-1"></i>
-                <span class="text-[10px] font-bold">Trang chủ</span>
-                <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-1"></div>
+        <nav class="absolute bottom-0 w-full bg-white border-t border-slate-200 px-4 py-3 pb-8 flex justify-between items-center z-40 rounded-b-[38px]">
+            <button onclick="switchTab('home')" id="tab-home" class="nav-item active flex flex-col items-center gap-1 w-16 transition-colors">
+                <i class="fa-solid fa-house text-lg mb-0.5"></i>
+                <span class="text-[9px] font-bold">Trang chủ</span>
+                <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-0.5"></div>
             </button>
-            <button onclick="switchTab('schedule')" id="tab-schedule" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-14 transition-colors">
-                <i class="fa-solid fa-calendar-check text-xl mb-1"></i>
-                <span class="text-[10px] font-bold">Lịch trình</span>
-                <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-1"></div>
+            <button onclick="switchTab('schedule')" id="tab-schedule" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-16 transition-colors">
+                <i class="fa-solid fa-calendar-check text-lg mb-0.5"></i>
+                <span class="text-[9px] font-bold">Lịch trình</span>
+                <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-0.5"></div>
             </button>
-            <button onclick="switchTab('zalo')" id="tab-zalo" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-[76px] transition-colors">
-                <i class="fa-regular fa-comment-dots text-xl mb-1"></i>
-                <span class="text-[10px] font-bold text-center leading-tight whitespace-nowrap">Thông báo Zalo</span>
-                <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-1"></div>
+            <button onclick="switchTab('profile')" id="tab-profile" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-16 transition-colors">
+                <i class="fa-solid fa-file-medical text-lg mb-0.5"></i>
+                <span class="text-[9px] font-bold">Hồ sơ</span>
+                <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-0.5"></div>
             </button>
-            <button onclick="switchTab('profile')" id="tab-profile" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-14 transition-colors">
-                <i class="fa-solid fa-file-medical text-xl mb-1"></i>
-                <span class="text-[10px] font-bold">Hồ sơ</span>
-                <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-1"></div>
+            <button onclick="switchTab('zalo')" id="tab-zalo" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-16 transition-colors">
+                <i class="fa-solid fa-comment-medical text-lg mb-0.5"></i>
+                <span class="text-[9px] font-bold whitespace-nowrap">Zalo</span>
+                <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-0.5"></div>
             </button>
         </nav>
+
+        <!-- MODAL THÊM LỊCH THUỐC -->
+        <div id="add-modal" class="absolute inset-0 bg-slate-900/60 z-50 flex flex-col justify-end hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white rounded-t-[24px] w-full p-5 max-h-[85%] overflow-y-auto transform translate-y-full transition-transform duration-300" id="add-modal-content">
+                <div class="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 py-1 border-b border-slate-50">
+                    <h2 class="text-lg font-bold text-slate-800">Thêm Lịch Thuốc</h2>
+                    <button onclick="closeAddModal()" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200"><i class="fa-solid fa-times"></i></button>
+                </div>
+                <div class="space-y-4 mb-5 mt-2">
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Tên thuốc</label>
+                            <input id="input-med-name" type="text" placeholder="VD: Panadol" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-medical-500 bg-slate-50">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Liều lượng</label>
+                            <input id="input-med-dose" type="text" placeholder="1 viên" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-medical-500 bg-slate-50">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Giai đoạn uống (Đơn bác sĩ)</label>
+                        <div class="flex items-center gap-2">
+                            <input type="date" value="2026-05-08" class="flex-1 border border-slate-200 rounded-xl px-2 py-2 text-xs text-slate-700 bg-slate-50">
+                            <i class="fa-solid fa-arrow-right text-slate-300 text-[10px]"></i>
+                            <input type="date" value="2026-06-08" class="flex-1 border border-slate-200 rounded-xl px-2 py-2 text-xs text-slate-700 bg-slate-50">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Khay chứa</label>
+                            <select id="input-med-tray" class="w-full border border-slate-200 rounded-xl px-2 py-2 text-xs bg-slate-50">
+                                <option value="Sáng">Khay Sáng</option>
+                                <option value="Trưa">Khay Trưa</option>
+                                <option value="Tối">Khay Tối</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Cách uống</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="relative">
+                                <input type="radio" name="meal_time" class="peer sr-only" checked>
+                                <div class="p-2 border border-slate-200 rounded-xl text-center cursor-pointer peer-checked:bg-green-50 peer-checked:border-green-500 peer-checked:text-green-700 transition-all">
+                                    <i class="fa-solid fa-clock text-xs mb-1 block"></i>
+                                    <span class="text-[10px] font-semibold">Trước ăn 30p</span>
+                                </div>
+                            </label>
+                            <label class="relative">
+                                <input type="radio" name="meal_time" class="peer sr-only">
+                                <div class="p-2 border border-slate-200 rounded-xl text-center cursor-pointer peer-checked:bg-orange-50 peer-checked:border-orange-500 peer-checked:text-orange-700 transition-all">
+                                    <i class="fa-solid fa-utensils text-xs mb-1 block"></i>
+                                    <span class="text-[10px] font-semibold">Sau ăn no</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="saveMedication()" class="w-full bg-medical-600 text-white font-bold text-xs py-3.5 rounded-xl hover:bg-medical-700 transition-colors shadow-md">
+                    Lưu Lịch & Đồng Bộ KinBox
+                </button>
+            </div>
+        </div>
+
+        <!-- MODAL THÊM NGƯỜI CHĂM SÓC -->
+        <div id="add-caregiver-modal" class="absolute inset-0 bg-slate-900/60 z-50 flex flex-col justify-end hidden opacity-0 transition-opacity duration-300">
+            <div class="bg-white rounded-t-[24px] w-full p-5 max-h-[85%] overflow-y-auto transform translate-y-full transition-transform duration-300" id="add-caregiver-modal-content">
+                <div class="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 py-1 border-b border-slate-50">
+                    <h2 class="text-lg font-bold text-slate-800">Thêm Người Chăm Sóc</h2>
+                    <button onclick="closeAddCaregiverModal()" class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200"><i class="fa-solid fa-times"></i></button>
+                </div>
+                <div class="space-y-4 mb-5 mt-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Họ và tên</label>
+                        <input id="cg-name" type="text" placeholder="VD: Chú Hoàng" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs bg-slate-50 outline-none focus:border-medical-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Quan hệ</label>
+                            <input id="cg-relation" type="text" placeholder="VD: Con trai" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs bg-slate-50 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Số điện thoại</label>
+                            <input id="cg-phone" type="tel" placeholder="09xx..." class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs bg-slate-50 outline-none">
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-red-100 bg-red-50/50 rounded-xl mt-2">
+                        <div>
+                            <p class="text-xs font-bold text-red-700">Nhận thông báo khẩn</p>
+                            <p class="text-[9px] text-red-500">Gọi/nhắn tin tự động khi bỏ thuốc</p>
+                        </div>
+                        <input type="checkbox" id="cg-emergency" class="w-5 h-5 accent-red-500" checked>
+                    </div>
+                </div>
+                <button onclick="saveCaregiver()" class="w-full bg-medical-600 text-white font-bold text-xs py-3.5 rounded-xl hover:bg-medical-700 transition-colors shadow-md">
+                    Thêm Vào Vòng Tròn
+                </button>
+            </div>
+        </div>
 
     </div>
 
     <script>
-        // Splash Screen Logic
-        window.addEventListener('DOMContentLoaded', () => {
-            const splashScreen = document.getElementById('splash-screen');
-            // Đợi 3 giây (3000ms) trước khi bắt đầu ẩn
+        // 1. Splash Screen & Push Notification Logic
+        window.addEventListener('load', () => {
             setTimeout(() => {
-                splashScreen.style.opacity = '0'; // Bắt đầu làm mờ
-                // Sau khi hiệu ứng làm mờ xong (0.5s) thì ẩn hoàn toàn thẻ div
+                const splash = document.getElementById('splash-screen');
+                splash.classList.add('animate-fade-out');
                 setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                }, 500);
-            }, 3000);
+                    splash.style.display = 'none';
+                    // Show Zalo Push after 1.5s of being on home screen
+                    setTimeout(() => {
+                        document.getElementById('os-push-notification').classList.add('show');
+                    }, 1500);
+                }, 500); 
+            }, 3000); 
         });
 
-        // Chức năng chuyển Tab chính
-        function switchTab(tabId) {
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            document.getElementById(`screen-${tabId}`).classList.add('active');
-
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active', 'text-medical-600');
-                item.classList.add('text-slate-400');
-            });
-            const activeBtn = document.getElementById(`tab-${tabId}`);
-            activeBtn.classList.add('active');
-            activeBtn.classList.remove('text-slate-400');
+        // 2. Dismiss Push Notification
+        function dismissPush() {
+            const push = document.getElementById('os-push-notification');
+            push.style.transform = 'translateY(-150%) translateX(-50%)';
+            push.style.opacity = '0';
+            setTimeout(() => { push.style.display = 'none'; }, 400);
         }
 
-        // Chức năng chuyển Tab con trong phần Lịch trình
+        // 3. Chuyển Tab & Quản lý FAB
+        function switchTab(tabId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(`screen-${tabId}`).classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(i => {
+                i.classList.remove('active', 'text-medical-600'); i.classList.add('text-slate-400');
+            });
+            const btn = document.getElementById(`tab-${tabId}`);
+            btn.classList.add('active'); btn.classList.remove('text-slate-400');
+
+            // FAB Logic: Chỉ hiện ở tab schedule
+            const fab = document.getElementById('add-med-fab');
+            if(tabId === 'schedule') {
+                fab.classList.remove('hidden'); fab.classList.add('flex');
+            } else {
+                fab.classList.add('hidden'); fab.classList.remove('flex');
+            }
+        }
+
         function toggleSubTab(viewId) {
             document.getElementById('view-today').classList.add('hidden');
             document.getElementById('view-history').classList.add('hidden');
@@ -847,60 +900,95 @@
             const historyBtn = document.getElementById('subtab-history');
 
             if(viewId === 'today') {
-                todayBtn.classList.add('bg-white', 'shadow-sm', 'text-medical-600', 'font-bold');
-                todayBtn.classList.remove('text-slate-500', 'font-medium');
-                historyBtn.classList.add('text-slate-500', 'font-medium');
-                historyBtn.classList.remove('bg-white', 'shadow-sm', 'text-medical-600', 'font-bold');
+                todayBtn.classList.add('bg-white', 'text-medical-600'); todayBtn.classList.remove('text-slate-500');
+                historyBtn.classList.add('text-slate-500'); historyBtn.classList.remove('bg-white', 'text-medical-600');
             } else {
-                historyBtn.classList.add('bg-white', 'shadow-sm', 'text-medical-600', 'font-bold');
-                historyBtn.classList.remove('text-slate-500', 'font-medium');
-                todayBtn.classList.add('text-slate-500', 'font-medium');
-                todayBtn.classList.remove('bg-white', 'shadow-sm', 'text-medical-600', 'font-bold');
+                historyBtn.classList.add('bg-white', 'text-medical-600'); historyBtn.classList.remove('text-slate-500');
+                todayBtn.classList.add('text-slate-500'); todayBtn.classList.remove('bg-white', 'text-medical-600');
             }
         }
 
-        // Chức năng Đóng/Mở Modal thêm lịch thuốc
-        const modal = document.getElementById('add-modal');
-        const modalContent = document.getElementById('add-modal-content');
+        // 4. Logic Thêm Lịch Thuốc
+        const modalAdd = document.getElementById('add-modal');
+        const modalAddContent = document.getElementById('add-modal-content');
+        function openAddModal() { modalAdd.classList.remove('hidden'); void modalAdd.offsetWidth; modalAdd.classList.remove('opacity-0'); modalAddContent.classList.remove('translate-y-full'); }
+        function closeAddModal() { modalAdd.classList.add('opacity-0'); modalAddContent.classList.add('translate-y-full'); setTimeout(() => modalAdd.classList.add('hidden'), 300); }
 
-        function openAddModal() {
-            modal.classList.remove('hidden');
-            void modal.offsetWidth; // Cập nhật lại UI
-            modal.classList.remove('opacity-0');
-            modalContent.classList.remove('translate-y-full');
-        }
-
-        function closeAddModal() {
-            modal.classList.add('opacity-0');
-            modalContent.classList.add('translate-y-full');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        }
-
-        // Chức năng giả lập lưu lịch thuốc
         function saveMedication() {
+            const time = document.getElementById('med-time').value || '08:00';
+            const name = document.getElementById('med-name').value || 'Thuốc mới';
             const btn = document.querySelector('#add-modal-content button[onclick="saveMedication()"]');
+            const orig = btn.innerHTML;
+            btn.innerHTML = 'Đang lưu...'; btn.classList.replace('bg-medical-600', 'bg-slate-400');
+            setTimeout(() => {
+                btn.innerHTML = 'Thành công!'; btn.classList.replace('bg-slate-400', 'bg-success');
+                const html = `
+                <div class="relative mt-4">
+                    <div class="absolute -left-[35px] top-1 w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center ring-4 ring-slate-50"><i class="fa-solid fa-star text-white text-[10px]"></i></div>
+                    <div class="bg-white p-4 rounded-2xl shadow-md border-l-4 border-yellow-400">
+                        <div class="flex justify-between items-start mb-2"><h4 class="font-bold text-slate-800">Lịch bổ sung - ${time}</h4><span class="bg-yellow-50 text-yellow-600 text-[10px] px-2 py-1 rounded-md font-bold uppercase">Vừa thêm</span></div>
+                        <div class="flex items-start gap-2 mt-3"><div class="w-6 h-6 rounded bg-slate-50 flex items-center justify-center shrink-0 mt-0.5"><i class="fa-solid fa-pills text-slate-400 text-[10px]"></i></div><div><p class="text-sm font-semibold text-slate-700 leading-tight">${name}</p></div></div>
+                    </div>
+                </div>`;
+                document.querySelector('#view-today .space-y-6').insertAdjacentHTML('beforeend', html);
+                setTimeout(() => { closeAddModal(); setTimeout(() => { btn.innerHTML = orig; btn.classList.replace('bg-success', 'bg-medical-600'); }, 300); }, 1000);
+            }, 1000);
+        }
+
+        // 5. Logic Thêm Người Chăm Sóc
+        function openAddCaregiverModal() {
+            const modal = document.getElementById('add-caregiver-modal');
+            const content = document.getElementById('add-caregiver-modal-content');
+            modal.classList.remove('hidden'); void modal.offsetWidth;
+            modal.classList.remove('opacity-0'); content.classList.remove('translate-y-full');
+        }
+        function closeAddCaregiverModal() {
+            const modal = document.getElementById('add-caregiver-modal');
+            const content = document.getElementById('add-caregiver-modal-content');
+            modal.classList.add('opacity-0'); content.classList.add('translate-y-full');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+        function saveCaregiver() {
+            const btn = document.querySelector('#add-caregiver-modal-content button[onclick="saveCaregiver()"]');
             const originalText = btn.innerHTML;
-            
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Đang lưu...';
-            btn.classList.remove('bg-medical-600', 'hover:bg-medical-700');
-            btn.classList.add('bg-slate-400');
+
+            const name = document.getElementById('cg-name').value || "Người thân mới";
+            const relation = document.getElementById('cg-relation').value || "Gia đình";
+            const emergency = document.getElementById('cg-emergency').checked;
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Đang thêm...';
+            btn.classList.add('bg-slate-400'); btn.classList.remove('bg-medical-600');
             
             setTimeout(() => {
-                btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Đã lưu thành công!';
-                btn.classList.remove('bg-slate-400');
-                btn.classList.add('bg-success');
+                let emergencyBadge = emergency ? `<div class="text-red-500 text-[10px] font-bold bg-red-50 px-2 py-1 rounded"><i class="fa-solid fa-bell"></i> Khẩn cấp</div>` : '';
+                
+                const cgHTML = `
+                <div class="p-3 border-b border-slate-50 flex items-center justify-between bg-yellow-50/30 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-sm"><i class="fa-regular fa-user"></i></div>
+                        <div>
+                            <p class="font-semibold text-slate-800 text-xs">${name}</p>
+                            <p class="text-[9px] text-slate-500 mt-0.5">Người theo dõi (${relation})</p>
+                        </div>
+                    </div>
+                    ${emergencyBadge}
+                </div>`;
+                
+                document.getElementById('caregiver-list').insertAdjacentHTML('beforeend', cgHTML);
+
+                btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Thành công!';
+                btn.classList.replace('bg-slate-400', 'bg-success');
                 
                 setTimeout(() => {
-                    closeAddModal();
+                    closeAddCaregiverModal();
+                    document.getElementById('cg-name').value = '';
+                    document.getElementById('cg-relation').value = '';
                     setTimeout(() => {
                         btn.innerHTML = originalText;
-                        btn.classList.remove('bg-success');
-                        btn.classList.add('bg-medical-600', 'hover:bg-medical-700');
+                        btn.classList.replace('bg-success', 'bg-medical-600');
                     }, 300);
                 }, 1000);
-            }, 1000);
+            }, 800);
         }
     </script>
 </body>
