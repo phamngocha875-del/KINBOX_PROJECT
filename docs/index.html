@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KinBox Caregiver App</title>
+    <title>KinBox App</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,6 +68,7 @@
             display: flex;
             flex-direction: column;
             border: 12px solid #0f172a;
+            transform: translateZ(0); 
         }
 
         .notch {
@@ -148,6 +149,29 @@
         /* Splash Screen Transition */
         #splash-screen {
             transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Tối ưu hóa Responsive cho Điện thoại thật */
+        @media (max-width: 600px) {
+            body {
+                padding: 0;
+                background-color: #f8fafc;
+            }
+            .mobile-frame {
+                border: none;
+                border-radius: 0;
+                max-width: 100%;
+                width: 100vw;
+                height: 100dvh; /* Sử dụng dynamic viewport height */
+                max-height: 100dvh;
+            }
+            .notch {
+                display: none; /* Ẩn tai thỏ giả trên điện thoại thật */
+            }
+            nav {
+                border-radius: 0 !important; /* Xóa bo góc thanh điều hướng dưới */
+                padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important; /* Tránh viền dưới iPhone */
+            }
         }
     </style>
 </head>
@@ -283,15 +307,15 @@
 
                     <div class="relative border-l-2 border-medical-100 ml-4 pl-6 pb-4 space-y-6">
                         
-                        <!-- Missed Dose -->
+                        <!-- Taken Dose -->
                         <div class="relative">
-                            <div class="absolute -left-[35px] top-1 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center ring-4 ring-slate-50">
-                                <i class="fa-solid fa-exclamation text-white text-[10px]"></i>
+                            <div class="absolute -left-[35px] top-1 w-6 h-6 rounded-full bg-success flex items-center justify-center ring-4 ring-slate-50">
+                                <i class="fa-solid fa-check text-white text-[10px]"></i>
                             </div>
-                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-red-200">
+                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
                                 <div class="flex justify-between items-start mb-2">
                                     <h4 class="font-bold text-slate-800">Buổi Sáng - 08:00</h4>
-                                    <span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-md font-bold uppercase">Đã bỏ lỡ</span>
+                                    <span class="bg-green-100 text-green-700 text-[10px] px-2 py-1 rounded-md font-bold uppercase">Đã tuân thủ</span>
                                 </div>
                                 <div class="inline-block bg-orange-100 text-orange-700 text-[10px] font-semibold px-2 py-1 rounded mb-3">
                                     <i class="fa-solid fa-utensils mr-1"></i> Sau ăn sáng 30 phút
@@ -473,7 +497,7 @@
                 </div>
 
                 <!-- Floating Action Button: Đẩy lên bottom-28 -->
-                <button onclick="openAddModal()" class="absolute bottom-28 right-5 w-14 h-14 bg-medical-600 text-white rounded-full shadow-lg shadow-medical-300 flex items-center justify-center text-xl hover:bg-medical-700 transition-colors z-30">
+                <button onclick="openAddModal()" class="fixed bottom-28 right-5 w-14 h-14 bg-medical-600 text-white rounded-full shadow-lg shadow-medical-300 flex items-center justify-center text-xl hover:bg-medical-700 transition-colors z-30">
                     <i class="fa-solid fa-plus"></i>
                 </button>
             </div>
@@ -555,6 +579,100 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- ============================================== -->
+            <!-- SCREEN 4: TÍCH HỢP ZALO OA -->
+            <!-- ============================================== -->
+            <div id="screen-zalo" class="screen pt-12 px-5">
+                <h1 class="text-2xl font-bold text-slate-800 mb-6 mt-2">Kết nối Zalo</h1>
+                
+                <!-- Status Liên kết -->
+                <div class="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl p-5 text-white shadow-lg shadow-blue-200 mb-6 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-md p-1 shrink-0">
+                            <div class="w-full h-full bg-[#0068FF] rounded-lg flex items-center justify-center">
+                                <span class="text-white font-extrabold text-[12px] tracking-wide">Zalo</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-lg">Đã liên kết Zalo</h2>
+                            <p class="text-xs text-blue-100">Nhóm: Gia đình chăm sóc Nội (4)</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-link text-xl text-blue-200"></i>
+                </div>
+
+                <!-- Cấu hình luồng chăm sóc (Workflow) -->
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider ml-1 mb-2">Quy trình tự động</h3>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-6 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">Cảnh báo quên thuốc</p>
+                            <p class="text-[10px] text-slate-500">Gửi tin nhắn vào nhóm khi trễ 30 phút</p>
+                        </div>
+                        <!-- Toggle ON -->
+                        <div class="w-10 h-5 bg-medical-500 rounded-full relative cursor-pointer">
+                            <div class="absolute right-1 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                        </div>
+                    </div>
+                    <hr class="border-slate-50">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">Cảnh báo sắp hết thuốc</p>
+                            <p class="text-[10px] text-slate-500">Thông báo khi thuốc còn dưới 3 ngày</p>
+                        </div>
+                        <!-- Toggle ON -->
+                        <div class="w-10 h-5 bg-medical-500 rounded-full relative cursor-pointer">
+                            <div class="absolute right-1 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                        </div>
+                    </div>
+                    <hr class="border-slate-50">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">Nhắc nhở sạc pin</p>
+                            <p class="text-[10px] text-slate-500">Khi KinBox dưới 15% pin</p>
+                        </div>
+                        <!-- Toggle OFF -->
+                        <div class="w-10 h-5 bg-slate-200 rounded-full relative cursor-pointer">
+                            <div class="absolute left-1 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mockup Luồng Zalo (Ví dụ trực quan) -->
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider ml-1 mb-2">Thông báo Zalo</h3>
+                <div class="bg-slate-100 rounded-2xl p-4 border border-slate-200 space-y-3">
+                    
+                    <!-- Bubble 1: Cảnh báo quên thuốc & Giao việc gọi điện -->
+                    <div class="flex gap-2">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-md">OA</div>
+                        <div class="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm text-sm border border-slate-100 relative">
+                            <p class="font-bold text-red-600 text-xs mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Cảnh báo trễ thuốc</p>
+                            <p class="text-slate-700 text-[11px] leading-relaxed">Bà Nội chưa uống <b>Cữ Sáng (08:00)</b>. Cảm biến báo chưa mở nắp.</p>
+                            <p class="text-slate-700 text-[11px] leading-relaxed mt-1">Anh <span class="text-blue-600 font-semibold">@Minh Nam</span> gọi nhắc Bà nhé!</p>
+                            <div class="mt-2 flex gap-1">
+                                <button class="bg-blue-50 text-blue-600 text-[10px] px-3 py-1.5 rounded-lg font-bold border border-blue-100">Đã gọi xong</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bubble 2: Nhắc mua thuốc & Giao việc đi mua -->
+                    <div class="flex gap-2">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 font-bold text-xs shadow-md">OA</div>
+                        <div class="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm text-sm border border-slate-100">
+                            <p class="font-bold text-orange-500 text-xs mb-1"><i class="fa-solid fa-cart-shopping mr-1"></i>Nhắc mua thuốc</p>
+                            <p class="text-slate-700 text-[11px] leading-relaxed">Thuốc Huyết Áp (Ngăn 2) chỉ còn đủ dùng 2 ngày.</p>
+                            <p class="text-slate-700 text-[11px] leading-relaxed mt-1">Đã giao việc cho <span class="text-blue-600 font-semibold">@Cô Lan</span> đi mua thêm.</p>
+                            <div class="mt-2">
+                                <button class="w-full bg-blue-500 text-white text-[10px] py-2 rounded-lg font-bold flex items-center justify-center gap-1 shadow-sm">
+                                    <i class="fa-solid fa-location-dot"></i> Bản đồ nhà thuốc gần nhất
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -645,18 +763,23 @@
         </div> <!-- End App Container -->
 
         <!-- Bottom Navigation -->
-        <nav class="absolute bottom-0 w-full bg-white border-t border-slate-200 px-6 py-3 pb-8 flex justify-between items-center z-40 rounded-b-[33px]">
-            <button onclick="switchTab('home')" id="tab-home" class="nav-item active flex flex-col items-center gap-1 w-16 transition-colors">
+        <nav class="absolute bottom-0 w-full bg-white border-t border-slate-200 px-4 py-3 pb-8 flex justify-between items-center z-40 rounded-b-[33px]">
+            <button onclick="switchTab('home')" id="tab-home" class="nav-item active flex flex-col items-center gap-1 w-14 transition-colors">
                 <i class="fa-solid fa-house text-xl mb-1"></i>
                 <span class="text-[10px] font-bold">Trang chủ</span>
                 <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-1"></div>
             </button>
-            <button onclick="switchTab('schedule')" id="tab-schedule" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-16 transition-colors">
+            <button onclick="switchTab('schedule')" id="tab-schedule" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-14 transition-colors">
                 <i class="fa-solid fa-calendar-check text-xl mb-1"></i>
                 <span class="text-[10px] font-bold">Lịch trình</span>
                 <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-1"></div>
             </button>
-            <button onclick="switchTab('profile')" id="tab-profile" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-16 transition-colors">
+            <button onclick="switchTab('zalo')" id="tab-zalo" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-[76px] transition-colors">
+                <i class="fa-regular fa-comment-dots text-xl mb-1"></i>
+                <span class="text-[10px] font-bold text-center leading-tight whitespace-nowrap">Thông báo Zalo</span>
+                <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-1"></div>
+            </button>
+            <button onclick="switchTab('profile')" id="tab-profile" class="nav-item text-slate-400 flex flex-col items-center gap-1 w-14 transition-colors">
                 <i class="fa-solid fa-file-medical text-xl mb-1"></i>
                 <span class="text-[10px] font-bold">Hồ sơ</span>
                 <div class="nav-indicator w-1 h-1 bg-medical-600 rounded-full mt-1"></div>
