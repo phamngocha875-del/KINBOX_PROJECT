@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KinBox App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KinBox Caregiver App</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,6 +45,11 @@
     </script>
 
     <style>
+        /* Tối ưu hóa Root Size để tự động thu phóng toàn bộ App */
+        html {
+            font-size: 16px; /* Mặc định chuẩn trên máy tính */
+        }
+
         body {
             background-color: #cbd5e1;
             display: flex;
@@ -57,17 +62,18 @@
 
         .mobile-frame {
             width: 100%;
-            max-width: 414px;
+            max-width: 400px; /* Thu gọn 1 chút cho cân đối */
             height: 850px;
-            max-height: 95vh;
+            max-height: 90vh; /* Đảm bảo không bị tràn khung hình laptop */
+            aspect-ratio: 9 / 19.5; /* Giữ chuẩn tỉ lệ màn hình iPhone */
             background-color: #f8fafc;
-            border-radius: 45px;
+            border-radius: 40px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            border: 12px solid #0f172a;
+            border: 10px solid #0f172a;
             transform: translateZ(0); 
         }
 
@@ -76,11 +82,11 @@
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 120px;
-            height: 30px;
+            width: 110px;
+            height: 25px;
             background-color: #0f172a;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
             z-index: 100; /* Notch always on top */
         }
 
@@ -151,8 +157,13 @@
             transition: opacity 0.5s ease-in-out;
         }
 
-        /* Tối ưu hóa Responsive cho Điện thoại thật */
-        @media (max-width: 600px) {
+        /* Tối ưu hóa Responsive cho Điện thoại thật & Tablet */
+        @media (max-width: 768px) {
+            html {
+                /* Giảm kích thước gốc: Tailwind dùng 'rem' nên việc này sẽ tự động 
+                   thu nhỏ đồng loạt TOÀN BỘ chữ, padding, margin của cả App */
+                font-size: 14px; 
+            }
             body {
                 padding: 0;
                 background-color: #f8fafc;
@@ -164,6 +175,7 @@
                 width: 100vw;
                 height: 100dvh; /* Sử dụng dynamic viewport height */
                 max-height: 100dvh;
+                aspect-ratio: auto; /* Bỏ ép tỉ lệ trên điện thoại */
             }
             .notch {
                 display: none; /* Ẩn tai thỏ giả trên điện thoại thật */
@@ -171,6 +183,13 @@
             nav {
                 border-radius: 0 !important; /* Xóa bo góc thanh điều hướng dưới */
                 padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important; /* Tránh viền dưới iPhone */
+            }
+        }
+
+        /* Dành riêng cho màn hình điện thoại rất nhỏ (VD: iPhone SE, iPhone 8...) */
+        @media (max-width: 380px) {
+            html {
+                font-size: 13px; /* Ép nhỏ thêm để layout không bị vỡ */
             }
         }
     </style>
@@ -592,8 +611,8 @@
                 <div class="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl p-5 text-white shadow-lg shadow-blue-200 mb-6 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-md p-1 shrink-0">
-                            <div class="w-full h-full bg-[#0068FF] rounded-lg flex items-center justify-center">
-                                <span class="text-white font-extrabold text-[12px] tracking-wide">Zalo</span>
+                            <div class="w-full h-full bg-[#0068FF] rounded-lg flex items-center justify-center overflow-hidden">
+                                <span class="text-white font-black text-[10px] leading-none">Zalo</span>
                             </div>
                         </div>
                         <div>
